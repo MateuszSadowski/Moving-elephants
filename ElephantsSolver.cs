@@ -6,7 +6,7 @@ namespace RecruitmentTask
     class ElephantsData
     {
         public int Count { get; set; }
-        public int[] Weights { get; set; }
+        public int[] Weights { get; set; }  //TODO: Change into List<int>
         public int[] InitialArrangement { get; set; }
         public int[] TargetArrangement { get; set; }
     }
@@ -14,7 +14,8 @@ namespace RecruitmentTask
     {
         public List<int> Vertices { get; set; }
         public int MinWeight { get; set; }
-        public int MinWeightIndex { get; set; }
+        //public int MinWeightIndex { get; set; }
+        public int SumWeight { get; set; }
         public int Length { get { return Vertices.Count; } }
 
         public Cycle()
@@ -27,9 +28,9 @@ namespace RecruitmentTask
         public ElephantsData Data { get; set; }
         public DataParser Parser { get; private set; }
         private int[] Graph { get; set; }
-        private int ResultWeight { get; set; }
+        public int ResultWeight { get; set; }
         private int MinWeight { get; set; }
-        private int MinWeightIndex { get; set; }
+        //private int MinWeightIndex { get; set; }
         public List<Cycle> Cycles { get; set; }
 
         bool[] processedVertices;
@@ -72,7 +73,7 @@ namespace RecruitmentTask
                     var cycle = new Cycle();
 
                     cycle.MinWeight = Data.Weights[i - 1];
-                    cycle.MinWeightIndex = i - 1;
+                    cycle.SumWeight += Data.Weights[i - 1];
                     cycle.Vertices.Add(i);
 
                     processedVertices[i] = true;
@@ -82,7 +83,6 @@ namespace RecruitmentTask
                     if(cycle.MinWeight < MinWeight)
                     {
                         MinWeight = cycle.MinWeight;
-                        MinWeightIndex = cycle.MinWeightIndex;
                     }
 
                     Cycles.Add(cycle);
@@ -111,12 +111,68 @@ namespace RecruitmentTask
                 if(Data.Weights[next - 1] < cycle.MinWeight)
                 {
                     cycle.MinWeight = Data.Weights[next - 1];
-                    cycle.MinWeightIndex = next - 1;
                 }
+                cycle.SumWeight += Data.Weights[next - 1];
                 cycle.Vertices.Add(next);
                 processedVertices[next] = true;
                 next = Graph[next];
             }
+        }
+
+        public void SolveCycles()
+        {
+            foreach (var cycle in Cycles)
+            {
+                ResultWeight += SolveCycle(cycle);
+            }
+        }
+
+        private int SolveCycle(Cycle cycle)
+        {
+            if(IsSecondMethodBetter(cycle))
+            {
+                return SolveCycleSecondMethod(cycle);
+            }
+            else
+            {   
+                return SolveCycleFirstMethod(cycle);
+            }
+        }
+
+        private bool IsSecondMethodBetter(Cycle cycle)
+        {
+            return (cycle.Length - 3)/(cycle.Length + 1) * cycle.MinWeight > MinWeight; //sum(C) + (|C|-2) * min(C) >? sum(C) + min(C) + (|C|+1) * min
+        }
+
+        private int SolveCycleFirstMethod(Cycle cycle)
+        {
+            // int cost = 0;
+            // while(Graph[cycle.MinWeightIndex] != cycle.MinWeightIndex)  //until lightest elephant is in target position
+            // {
+            //     int prevInCycle = Graph[cycle.MinWeightIndex];
+            //     Graph[cycle.MinWeightIndex] = Graph[prevInCycle];
+            //     Graph[prevInCycle] = prevInCycle;   //in target position
+
+            //     cost += Data.Weights[prevInCycle];
+            //     cost += cycle.MinWeight;
+            // }
+            // ResultWeight += cost;
+            return cycle.SumWeight + (cycle.Length - 2) * cycle.MinWeight;
+        }
+        private int SolveCycleSecondMethod(Cycle cycle)
+        {
+            // int cost = 0;
+            // while(Graph[cycle.MinWeightIndex] != cycle.MinWeightIndex)  //until lightest elephant is in target position
+            // {
+            //     int prevInCycle = Graph[cycle.MinWeightIndex];
+            //     Graph[cycle.MinWeightIndex] = Graph[prevInCycle];
+            //     Graph[prevInCycle] = prevInCycle;   //in target position
+
+            //     cost += Data.Weights[prevInCycle];
+            //     cost += cycle.MinWeight;
+            // }
+            // ResultWeight += cost;
+            return cycle.SumWeight + cycle.MinWeight + (cycle.Length + 1) * MinWeight;
         }
     }
 }

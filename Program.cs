@@ -15,6 +15,7 @@ namespace RecruitmentTask
             var solver = new ElephantsSolver();
             solver.ParseInputData();
             solver.PartitionIntoCycles();
+            solver.SolveCycles();
             (new Util()).PrintData(solver);
         }
     }
