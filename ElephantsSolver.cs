@@ -16,7 +16,7 @@ namespace RecruitmentTask
         public DataParser Parser { get; private set; }
         private int[] Graph { get; set; }
         private int ResultWeight { get; set; }
-        public List<List<int>> Cycles { get; set; }
+        public List<int[]> Cycles { get; set; }
 
         bool[] processedVertices;
 
@@ -35,7 +35,7 @@ namespace RecruitmentTask
 
             ResultWeight = 0;
 
-            Cycles = new List<List<int>>();
+            Cycles = new List<int[]>();
         }
 
         public void ParseInputData()
@@ -45,39 +45,43 @@ namespace RecruitmentTask
 
         public void PartitionIntoCycles()
         {
-            Graph = new int[Data.Count + 1];
-            Graph[0] = 0; //sentiel
-            // Array.Copy(Data.InitialArrangement, 0, Graph, 1, Data.Count);
-            for (int i = 0; i < Data.InitialArrangement.Length; i++)
-            {
-                Graph[Data.InitialArrangement[i]] = Data.TargetArrangement[i];  //TODO: cleanup
-            }
+            InitializeGraph();
+
             processedVertices = new bool[Data.Count + 1];
-            processedVertices[0] = true;    //sentiel
+            processedVertices[0] = true; //sentiel
 
             for (int i = 1; i < processedVertices.Length; i++)
             {
-                if(processedVertices[i])
-                    continue;
+                if (!processedVertices[i])
+                {
+                    var cycle = new List<int>();
+                    cycle.Add(i);
+                    processedVertices[i] = true;
 
-                var cycle = new List<int>();
-                cycle.Add(i);
-                processedVertices[i] = true;
-                FindCycle(i, cycle);
-                // var foundCycle = new int[cycle.Count];
-                // int j = 0;
-                // while(cycle.Count > 0)
-                // {
-                //     foundCycle[j++] = cycle.
-                // }
-                Cycles.Add(cycle);  //TODO: do it better?
+                    FindCycle(i, cycle);
+
+                    Cycles.Add(cycle.ToArray()); //TODO: do it better?
+                }
+            }
+        }
+
+        private void InitializeGraph()
+        {
+            Graph = new int[Data.Count + 1];
+            Graph[0] = 0; //sentiel
+
+            for (int i = 0; i < Data.InitialArrangement.Length; i++)
+            {
+                int from = Data.InitialArrangement[i];
+                int to = Data.TargetArrangement[i];
+                Graph[from] = to;
             }
         }
 
         private void FindCycle(int start, List<int> cycle)
         {
             int next = Graph[start];
-            while(next != start)
+            while (next != start)
             {
                 cycle.Add(next);
                 processedVertices[next] = true;
