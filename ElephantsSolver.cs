@@ -10,13 +10,27 @@ namespace RecruitmentTask
         public int[] InitialArrangement { get; set; }
         public int[] TargetArrangement { get; set; }
     }
+    class Cycle
+    {
+        public List<int> Vertices { get; set; }
+        public int MinWeight { get; set; }
+        public int MinWeightIndex { get; set; }
+        public int Length { get { return Vertices.Count; } }
+
+        public Cycle()
+        {
+            Vertices = new List<int>();
+        }
+    }
     class ElephantsSolver
     {
         public ElephantsData Data { get; set; }
         public DataParser Parser { get; private set; }
         private int[] Graph { get; set; }
         private int ResultWeight { get; set; }
-        public List<int[]> Cycles { get; set; }
+        private int MinWeight { get; set; }
+        private int MinWeightIndex { get; set; }
+        public List<Cycle> Cycles { get; set; }
 
         bool[] processedVertices;
 
@@ -34,8 +48,9 @@ namespace RecruitmentTask
             //(there is an edge (2,5) in the graph)
 
             ResultWeight = 0;
+            MinWeight = Int32.MaxValue;
 
-            Cycles = new List<int[]>();
+            Cycles = new List<Cycle>();
         }
 
         public void ParseInputData()
@@ -54,13 +69,23 @@ namespace RecruitmentTask
             {
                 if (!processedVertices[i])
                 {
-                    var cycle = new List<int>();
-                    cycle.Add(i);
+                    var cycle = new Cycle();
+
+                    cycle.MinWeight = Data.Weights[i - 1];
+                    cycle.MinWeightIndex = i - 1;
+                    cycle.Vertices.Add(i);
+
                     processedVertices[i] = true;
 
                     FindCycle(i, cycle);
 
-                    Cycles.Add(cycle.ToArray()); //TODO: do it better?
+                    if(cycle.MinWeight < MinWeight)
+                    {
+                        MinWeight = cycle.MinWeight;
+                        MinWeightIndex = cycle.MinWeightIndex;
+                    }
+
+                    Cycles.Add(cycle);
                 }
             }
         }
@@ -78,12 +103,17 @@ namespace RecruitmentTask
             }
         }
 
-        private void FindCycle(int start, List<int> cycle)
+        private void FindCycle(int start, Cycle cycle)
         {
             int next = Graph[start];
             while (next != start)
             {
-                cycle.Add(next);
+                if(Data.Weights[next - 1] < cycle.MinWeight)
+                {
+                    cycle.MinWeight = Data.Weights[next - 1];
+                    cycle.MinWeightIndex = next - 1;
+                }
+                cycle.Vertices.Add(next);
                 processedVertices[next] = true;
                 next = Graph[next];
             }

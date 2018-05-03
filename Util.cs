@@ -28,7 +28,7 @@ namespace RecruitmentTask
             foreach (var cycle in solver.Cycles)
             {
                 System.Console.Write("Cycle: ");
-                foreach (var vertex in cycle)
+                foreach (var vertex in cycle.Vertices)
                 {
                     System.Console.Write("{0} ", vertex);
                 }
