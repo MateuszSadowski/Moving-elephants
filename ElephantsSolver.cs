@@ -141,7 +141,7 @@ namespace RecruitmentTask
 
         private bool IsSecondMethodBetter(Cycle cycle)
         {
-            return (cycle.Length - 3)/(cycle.Length + 1) * cycle.MinWeight > MinWeight; //sum(C) + (|C|-2) * min(C) >? sum(C) + min(C) + (|C|+1) * min
+            return ((float)(cycle.Length - 3))/(cycle.Length + 1) * cycle.MinWeight > MinWeight; //sum(C) + (|C|-2) * min(C) >? sum(C) + min(C) + (|C|+1) * min
         }
 
         private int SolveCycleFirstMethod(Cycle cycle)
