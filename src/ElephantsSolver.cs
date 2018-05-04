@@ -3,19 +3,19 @@ using System.Collections.Generic;
 
 namespace RecruitmentTask
 {
-    class ElephantsData
+    public class ElephantsData
     {
         public int Count { get; set; }
-        public int[] Weights { get; set; }  //TODO: Change into List<int>
+        public int[] Weights { get; set; } 
         public int[] InitialArrangement { get; set; }
         public int[] TargetArrangement { get; set; }
     }
-    class Cycle
+    public class Cycle
     {
         public List<int> Vertices { get; set; }
         public int MinWeight { get; set; }
         //public int MinWeightIndex { get; set; }
-        public int SumWeight { get; set; }
+        public long SumWeight { get; set; }
         public int Length { get { return Vertices.Count; } }
 
         public Cycle()
@@ -23,22 +23,22 @@ namespace RecruitmentTask
             Vertices = new List<int>();
         }
     }
-    class ElephantsSolver
+    public class ElephantsSolver
     {
         public ElephantsData Data { get; set; }
         public DataParser Parser { get; private set; }
         private int[] Graph { get; set; }
-        public int ResultWeight { get; set; }
+        public long ResultWeight { get; set; }
         private int MinWeight { get; set; }
         //private int MinWeightIndex { get; set; }
         public List<Cycle> Cycles { get; set; }
 
         bool[] processedVertices;
 
-        public ElephantsSolver()
+        public ElephantsSolver(String pathToFile = null)
         {
             Data = new ElephantsData();
-            Parser = new DataParser(Data);
+            Parser = new DataParser(Data, pathToFile);
 
             //Array of vertices of the graph
             //indices are numbers of specific elephants
@@ -127,7 +127,7 @@ namespace RecruitmentTask
             }
         }
 
-        private int SolveCycle(Cycle cycle)
+        private long SolveCycle(Cycle cycle)
         {
             if(IsSecondMethodBetter(cycle))
             {
@@ -144,9 +144,9 @@ namespace RecruitmentTask
             return ((float)(cycle.Length - 3))/(cycle.Length + 1) * cycle.MinWeight > MinWeight; //sum(C) + (|C|-2) * min(C) >? sum(C) + min(C) + (|C|+1) * min
         }
 
-        private int SolveCycleFirstMethod(Cycle cycle)
+        private long SolveCycleFirstMethod(Cycle cycle)
         {
-            // int cost = 0;
+            // long cost = 0;
             // while(Graph[cycle.MinWeightIndex] != cycle.MinWeightIndex)  //until lightest elephant is in target position
             // {
             //     int prevInCycle = Graph[cycle.MinWeightIndex];
@@ -159,9 +159,9 @@ namespace RecruitmentTask
             // ResultWeight += cost;
             return cycle.SumWeight + (cycle.Length - 2) * cycle.MinWeight;
         }
-        private int SolveCycleSecondMethod(Cycle cycle)
+        private long SolveCycleSecondMethod(Cycle cycle)
         {
-            // int cost = 0;
+            // long cost = 0;
             // while(Graph[cycle.MinWeightIndex] != cycle.MinWeightIndex)  //until lightest elephant is in target position
             // {
             //     int prevInCycle = Graph[cycle.MinWeightIndex];

@@ -1,15 +1,21 @@
 using System;
+using System.IO;
 
 namespace RecruitmentTask
 {
-     class DataParser
+    public class DataParser
     {
         ElephantsData OutputData {get; set;}
+        StreamReader file;
         String textRow;
 
-        public DataParser(ElephantsData outputData)
+        public DataParser(ElephantsData outputData, String pathToFile = null)
         {
             OutputData = outputData;
+            if(pathToFile != null)
+            {
+                file = new StreamReader(pathToFile);
+            }
         }
         public void ParseInputData()
         {
@@ -27,7 +33,7 @@ namespace RecruitmentTask
         {
             try
             {
-                textRow = Console.ReadLine();
+                textRow = file != null ? file.ReadLine() : Console.ReadLine();
             }
             catch (Exception e)
             {
