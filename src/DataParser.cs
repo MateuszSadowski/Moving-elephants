@@ -7,7 +7,7 @@ namespace RecruitmentTask
     {
         ElephantsData OutputData {get; set;}
         StreamReader file;
-        String textRow;
+        String textLine;
 
         public DataParser(ElephantsData outputData, String pathToFile = null)
         {
@@ -33,7 +33,7 @@ namespace RecruitmentTask
         {
             try
             {
-                textRow = file != null ? file.ReadLine() : Console.ReadLine();
+                textLine = file != null ? file.ReadLine() : Console.ReadLine();
             }
             catch (Exception e)
             {
@@ -44,12 +44,12 @@ namespace RecruitmentTask
 
         private void ParseCount()
         {
-            OutputData.Count = ParseNumber(textRow);
+            OutputData.Count = ParseNumber(textLine);
         }
 
         private void ParseWeights()
         {
-            String[] weights = textRow.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            String[] weights = textLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             OutputData.Weights = new int[OutputData.Count];
             for (int i = 0; i < OutputData.Count; i++)
             {
@@ -58,7 +58,7 @@ namespace RecruitmentTask
         }
         private void ParseInitialArrangement()
         {
-            String[] initialArrangement = textRow.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            String[] initialArrangement = textLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             OutputData.InitialArrangement = new int[OutputData.Count];
             for (int i = 0; i < OutputData.Count; i++)
             {
@@ -67,7 +67,7 @@ namespace RecruitmentTask
         }
         private void ParseTargetArrangement()
         {
-            String[] targetArrangement = textRow.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            String[] targetArrangement = textLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             OutputData.TargetArrangement = new int[OutputData.Count];
             for (int i = 0; i < OutputData.Count; i++)
             {

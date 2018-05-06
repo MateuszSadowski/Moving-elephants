@@ -14,10 +14,9 @@ namespace RecruitmentTask
     {
         public List<int> Vertices { get; set; }
         public int MinWeight { get; set; }
-        //public int MinWeightIndex { get; set; }
         public long SumWeight { get; set; }
         public int Length { get { return Vertices.Count; } }
-
+        
         public Cycle()
         {
             Vertices = new List<int>();
@@ -30,7 +29,6 @@ namespace RecruitmentTask
         private int[] Graph { get; set; }
         public long ResultWeight { get; set; }
         private int MinWeight { get; set; }
-        //private int MinWeightIndex { get; set; }
         public List<Cycle> Cycles { get; set; }
 
         bool[] processedVertices;
@@ -39,24 +37,27 @@ namespace RecruitmentTask
         {
             Data = new ElephantsData();
             Parser = new DataParser(Data, pathToFile);
-
-            //Array of vertices of the graph
-            //indices are numbers of specific elephants
-            //order of the elephants in the arrangement is not to be concerned of
-            //as long as it is known which elephant should be in the place of a specific elephant in the end
-            //values are which elephant should be in the place of the current elephant in the end
-            //value 5 under index 2 means that in the end elephant (2) should be where elephant (5) is
-            //(there is an edge (2,5) in the graph)
-
             ResultWeight = 0;
             MinWeight = Int32.MaxValue;
-
             Cycles = new List<Cycle>();
         }
 
         public void ParseInputData()
         {
             Parser.ParseInputData();
+        }
+
+        public void PrintResult()
+        {
+            System.Console.WriteLine("Result: {0}", ResultWeight);
+        }
+
+        public void Solve()
+        {
+            ParseInputData();
+            PartitionIntoCycles();
+            SolveCycles();
+            PrintResult();
         }
 
         public void PartitionIntoCycles()
@@ -92,6 +93,14 @@ namespace RecruitmentTask
 
         private void InitializeGraph()
         {
+            //Array of vertices of the graph
+            //indices are numbers of specific elephants
+            //order of the elephants in the arrangement is not to be concerned of
+            //as long as it is known which elephant should be in the place of a specific elephant in the end
+            //values are which elephant should be in the place of the current elephant in the end
+            //value 5 under index 2 means that in the end elephant (2) should be where elephant (5) is
+            //(there is an edge (2,5) in the graph)
+
             Graph = new int[Data.Count + 1];
             Graph[0] = 0; //sentiel
 
@@ -146,32 +155,10 @@ namespace RecruitmentTask
 
         private long SolveCycleFirstMethod(Cycle cycle)
         {
-            // long cost = 0;
-            // while(Graph[cycle.MinWeightIndex] != cycle.MinWeightIndex)  //until lightest elephant is in target position
-            // {
-            //     int prevInCycle = Graph[cycle.MinWeightIndex];
-            //     Graph[cycle.MinWeightIndex] = Graph[prevInCycle];
-            //     Graph[prevInCycle] = prevInCycle;   //in target position
-
-            //     cost += Data.Weights[prevInCycle];
-            //     cost += cycle.MinWeight;
-            // }
-            // ResultWeight += cost;
             return cycle.SumWeight + (cycle.Length - 2) * cycle.MinWeight;
         }
         private long SolveCycleSecondMethod(Cycle cycle)
         {
-            // long cost = 0;
-            // while(Graph[cycle.MinWeightIndex] != cycle.MinWeightIndex)  //until lightest elephant is in target position
-            // {
-            //     int prevInCycle = Graph[cycle.MinWeightIndex];
-            //     Graph[cycle.MinWeightIndex] = Graph[prevInCycle];
-            //     Graph[prevInCycle] = prevInCycle;   //in target position
-
-            //     cost += Data.Weights[prevInCycle];
-            //     cost += cycle.MinWeight;
-            // }
-            // ResultWeight += cost;
             return cycle.SumWeight + cycle.MinWeight + (cycle.Length + 1) * MinWeight;
         }
     }
